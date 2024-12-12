@@ -5,7 +5,7 @@ import swal from 'sweetalert2'
 import Swal from 'sweetalert2';
 
 interface Categoria{
-  id?: number,
+  id: number,
   nombre: string,
   detalle:string
 }
@@ -17,6 +17,7 @@ interface Categoria{
 })
 export class CategoriaComponent {
   private categoriaService=inject(CategoriaService)
+
   categorias:Categoria[]=[]
   dialog_visible: boolean=false
   categoria_id:number=-1;
@@ -44,7 +45,7 @@ export class CategoriaComponent {
 
   guardarCategoria(){
     if(this.categoria_id>0){     
-    this.categoriaService.funGuardar(this.categoriaForm.value).subscribe(
+    this.categoriaService.funModificar(this.categoria_id,this.categoriaForm.value).subscribe(
       (res:any)=>{
         this.dialog_visible=false;
         this.getCategorias();
@@ -63,9 +64,10 @@ export class CategoriaComponent {
       (res:any)=>{
         this.dialog_visible=false;
         this.getCategorias();
+        this.alerta("Registrado","La categoria se creo con exito!","success")
       },
       (error:any)=>{
-        console.log(error);
+        this.alerta("ERROR AL REGISTRADO", "Verifica los datos!", "error");
       }
 
 
@@ -75,7 +77,7 @@ this.categoriaForm.reset();
 }
   editarCategoria(cat:Categoria){
     this.dialog_visible=true
-    this.categoria_id
+    this.categoria_id=cat.id
     this.categoriaForm.setValue({nombre: cat.nombre, detalle: cat.detalle})
   }
   eliminarCategoria(cat:Categoria){
@@ -89,7 +91,7 @@ this.categoriaForm.reset();
       confirmButtonText: "Sí, eliminar!"
   }).then((result) => {
       if (result.isConfirmed) {
-          this.categoriaService.funEliminar(this.categoria_id).subscribe(
+          this.categoriaService.funEliminar(cat.id).subscribe(
               (res:any)=>{
                   
                   this.alerta("ELIMINANDO!","Categoria eliminada","success")
@@ -116,4 +118,3 @@ this.categoriaForm.reset();
         });
       }
     }
-  
